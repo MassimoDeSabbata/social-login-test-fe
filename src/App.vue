@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="Vue logo" src="https://www.bluwom.com/profiles/cms/images/file/1438113437.png">
+    <br>
+    <span>Social Login</span>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
