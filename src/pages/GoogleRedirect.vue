@@ -18,6 +18,9 @@ export default {
    created: function () {
     // `this` points to the vm instance
     let urlParams = new URLSearchParams(window.location.search);
+
+      console.log("PARAMS: ", urlParams);
+
       let code = urlParams.has('code') ? urlParams.get('code') : null;
       let scope = urlParams.has('scope') ? urlParams.get('scope') : null;
       let authuser = urlParams.has('authuser') ? urlParams.get('authuser') : null;
@@ -34,18 +37,43 @@ export default {
     prompt: prompt
   }})
       .then(response => {(console.log("DONE 2", response));
-      localStorage.token = response.data.AccessToken;
+      /* localStorage.token = response.data.AccessToken; */
+            this.saveToken(response.data);
       window.location.href = "http://localhost:8080/current-user"
         })
   },
   methods: {
 
-    googleCallBack: function () {
-      console.log("DONE");
-      axios
-      .get('http://localhost/login/google')
-      .then(response => (console.log("DONE 2", response)))
+saveToken: function (userData) {
+      let tokens = localStorage.tokens;
+      if(!tokens){
+        tokens = new Array();
+      } else {
+        tokens = JSON.parse(tokens)
+      }
+      console.log("tokens", tokens)
+      let tokenIndex = this.findToken(tokens, userData.email);
+      if(tokenIndex !== null){
+        tokens[tokenIndex] = {mail: userData.email, name: userData.name, token: userData.AccessToken};
+      } else {
+        tokens.push({mail: userData.email, name: userData.name, token: userData.AccessToken});
+      }
+      localStorage.tokens = JSON.stringify(tokens);
+      localStorage.token = userData.AccessToken;
+    },
+
+    findToken: function (tokens, email) {
+      if(!tokens || tokens.length === 0) {
+        return null;
+      }
+      for(let index = 0; index < tokens.length; index++){
+        if(tokens[index].mail === email){
+          return index;
+        }
+      }
+      return null;
     }
+
   }
 }
 </script>
